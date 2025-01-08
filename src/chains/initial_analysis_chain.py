@@ -1,25 +1,16 @@
 from langchain_core.prompts import PromptTemplate
-from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
+from langchain_core.output_parsers import JsonOutputParser
 from langchain_openai import ChatOpenAI
-from langchain_core.runnables import RunnableBranch, RunnablePassthrough
 
 
 class InitialAnalysisChain:
-    VALIDATION_PROMPT_TEMPLATE = """Validate if the user request contains a clear goal that requires a decision. Return 'TRUE' if it does, otherwise return 'FALSE'.
-
-User request:
-{user_request}
-
-Response:
-"""
-
     DECOMPOSITION_PROMPT_TEMPLATE = """User request:
 {user_request}
 
 Extract the following information from the above request:
 1. Goal definition
 2. Initial context, independent of the goal definition, containing user-provided decision-supportive data; if none is provided, return an empty string
-3. Action space comprises concrete actions clearly articulated in the user request. Each action must be directly applicable and executable, leaving no room for vague or abstract considerations. For example, if the user is considering using a car or bicycle, and other vehicles are also being considered, return only 'car' and 'bicycle' as options.
+3. Action space comprises concrete actions clearly articulated in the user request. Each action must be directly applicable and executable, leaving no room for vague or abstract considerations. Do not invent new actions. For example, if the user is considering using a car or bicycle, and other vehicles are also being considered, return only 'car' and 'bicycle' as options.
 
 Respond in the following JSON format:
 {{
@@ -44,23 +35,13 @@ Response:
 """
 
     def create(self):
-        llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.0)
-        return (
-            RunnablePassthrough.assign(
-                is_valid=PromptTemplate.from_template(self.VALIDATION_PROMPT_TEMPLATE)
-                    | llm
-                    | StrOutputParser()
-            )
-            | RunnableBranch(
-                (lambda state: state["is_valid"] == "FALSE", {}),
-                lambda state: self._decompose_user_prompt(state, llm)
-            )
-        )
+        self.llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.0)
+        return (self._decompose_user_prompt)
 
-    def _decompose_user_prompt(self, state, llm):
+    def _decompose_user_prompt(self, state):
         decomposition_chain = (
             PromptTemplate.from_template(self.DECOMPOSITION_PROMPT_TEMPLATE)
-            | llm
+            | self.llm
             | JsonOutputParser()
         )
         try:

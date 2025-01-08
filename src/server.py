@@ -35,6 +35,7 @@ async def debug(user_request: str):
         "goal_definition": "",
         "initial_context": "",
         "action_space": [],
+        "is_valid": False
     }
     return graph.invoke(initial_state)
 

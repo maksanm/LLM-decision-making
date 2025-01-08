@@ -5,7 +5,7 @@ from langchain_core.runnables import RunnableLambda, RunnableBranch, RunnablePas
 from langchain_community.retrievers import TavilySearchAPIRetriever
 
 
-class ActionExpansionChain:
+class ActionsExpansionChain:
     CAN_EXPAND_PROMPT_TEMPLATE = """User request:
 {user_request}
 
@@ -31,7 +31,8 @@ Retrieved data:
 {retrieved_data}
 </RETRIEVED_DATA>
 
-Analyze the retrieved data to identify the most reliable additional actions that can be taken to achieve the goal stated above. These actions should be distinct from, but similar to, the initial actions, maintaining strong relevance and consistency within the same domain (e.g., if deciding on crops to plant next year, suggest other specific crop options). Ensure that these additional actions are directly comparable to the initial ones. Provide the additional actions in the following JSON format:
+Analyze the retrieved data to identify the most reliable additional actions that can be taken to achieve the goal stated above. These actions should be distinct from, but similar to the initial actions, maintaining strong relevance and consistency within the same domain (e.g., if deciding on crops to plant next year, suggest other specific crop options).
+Each action must be concrete, directly applicable and executable, leaving no room for vague or abstract considerations. Ensure that these additional actions are directly comparable to the initial ones. Provide only what to do, without explanations. Provide the additional actions in the following JSON format:
 {{
     "new_actions": ["Action a", "Action b", ...]
 }}
@@ -44,7 +45,7 @@ Response:
         retriever = TavilySearchAPIRetriever(
             k=4,
             include_generated_answer=True,
-            include_domains=["https://www.usda.gov/"], # Use predifined data sources specific to the decision domain
+            #include_domains=["https://www.usda.gov/"], # Use predifined data sources specific to the decision domain
             search_depth="advanced"
         )
         return (
@@ -55,8 +56,11 @@ Response:
                 | StrOutputParser()
             )
             | RunnableBranch(
-                (lambda state: state["can_expand"] == "FALSE", {}),
+                (lambda state: state["can_expand"] == "FALSE", {
+                    "actions_filled": RunnableLambda(lambda _: True)
+                }),
                 {
+                    "actions_filled": RunnableLambda(lambda _: True),
                     "action_space": RunnablePassthrough.assign(
                         retrieved_data=RunnableLambda(lambda state: state["goal_definition"])
                             | retriever
@@ -85,4 +89,6 @@ Response:
         for document in retrieved_documents:
             content = document.page_content
             formatted_response.append(f"{content}\n")
+
+        print ("\n".join(formatted_response))
         return "\n".join(formatted_response)
