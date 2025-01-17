@@ -2,7 +2,9 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
 from langchain_openai import ChatOpenAI
 from langchain_core.runnables import RunnableLambda, RunnableBranch, RunnablePassthrough
-from langchain_community.retrievers import TavilySearchAPIRetriever
+import os
+
+from chains.web_search_chain import WebSearchChain
 
 
 class ActionsExpansionChain:
@@ -31,8 +33,7 @@ Retrieved data:
 {retrieved_data}
 </RETRIEVED_DATA>
 
-Analyze the retrieved data to identify the most reliable additional actions that can be taken to achieve the goal stated above. These actions should be distinct from, but similar to the initial actions, maintaining strong relevance and consistency within the same domain (e.g., if deciding on crops to plant next year, suggest other specific crop options).
-Each action must be concrete, directly applicable and executable, leaving no room for vague or abstract considerations. Ensure that these additional actions are directly comparable to the initial ones. Provide only what to do, without explanations. Provide the additional actions in the following JSON format:
+Analyze the retrieved data to identify up to """+ os.getenv("EXPANDED_ACTIONS_MAX_LIMIT") + """ of the most reliable additional actions that can be taken to achieve the goal stated above. These actions should be distinct yet similar to the initial ones, maintaining strong relevance and consistency within the same domain (e.g., if deciding on crops to plant next year, suggest other specific crop options). Each action must be concrete, directly applicable, and executable, leaving no room for vague or abstract considerations. Ensure these additional actions are directly comparable to the initial ones. Provide only what to do, without explanations, in the following JSON format:
 {{
     "new_actions": ["Action a", "Action b", ...]
 }}
@@ -42,30 +43,20 @@ Response:
 
     def create(self):
         llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.0)
-        retriever = TavilySearchAPIRetriever(
-            k=4,
-            include_generated_answer=True,
-            #include_domains=["https://www.usda.gov/"], # Use predifined data sources specific to the decision domain
-            search_depth="advanced"
-        )
         return (
             RunnableLambda(lambda state: self._expand_state_with_initial_actions(state))
             | RunnablePassthrough.assign(
                 can_expand=PromptTemplate.from_template(self.CAN_EXPAND_PROMPT_TEMPLATE)
                 | llm
-                | StrOutputParser()
+                | StrOutputParser(),
+                search_query=lambda state: f"Goal Definition: {state["goal_definition"]} Initially Proposed Actions: {state["initial_actions"]}. Please suggest proposed actions alternetives."
             )
             | RunnableBranch(
-                (lambda state: state["can_expand"] == "FALSE", {
-                    "actions_filled": RunnableLambda(lambda _: True)
-                }),
+                (lambda state: state["can_expand"] == "FALSE", {}),
                 {
-                    "actions_filled": RunnableLambda(lambda _: True),
-                    "action_space": RunnablePassthrough.assign(
-                        retrieved_data=RunnableLambda(lambda state: state["goal_definition"])
-                            | retriever
-                            | self._format_tavily_response,
-                    )
+                    "action_space": RunnablePassthrough().assign(
+                        retrieved_data=WebSearchChain().create()
+                    )| RunnablePassthrough.assign(zx=lambda x: print(x))
                     | PromptTemplate.from_template(self.ACTION_EXPANSION_PROMPT_TEMPLATE)
                     | llm
                     | JsonOutputParser()
@@ -83,12 +74,3 @@ Response:
 
     def _get_initial_actions_string(self, initial_actions):
         return ", ".join(initial_actions)
-
-    def _format_tavily_response(self, retrieved_documents):
-        formatted_response = []
-        for document in retrieved_documents:
-            content = document.page_content
-            formatted_response.append(f"{content}\n")
-
-        print ("\n".join(formatted_response))
-        return "\n".join(formatted_response)
