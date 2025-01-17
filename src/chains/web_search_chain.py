@@ -28,7 +28,8 @@ Please provide a summary that integrates information from both sources to respon
         self.tavily_retriever = TavilyRetriever(domains=domains)
 
     def create(self):
-        return ( RunnablePassthrough.assign(
+        return (
+            RunnablePassthrough.assign(
                 perplexity_response=lambda state: self.perplexity_retriever.invoke(state["search_query"]),
                 tavily_response=lambda state: self.tavily_retriever.invoke(state["search_query"])
             )
