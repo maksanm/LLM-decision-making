@@ -8,6 +8,7 @@ from chains.context_completion_chain import ContextsCompletionChain
 from chains.context_discretizer_chain import ContextDiscretizerChain
 from chains.initial_analysis_chain import InitialAnalysisChain
 from chains.input_validation_chain import InputValidationChain
+from chains.states_enumeration_chain import StatesEnumerationChain
 
 
 class DecisionState(TypedDict):
@@ -38,15 +39,16 @@ class DecisionGraph:
         graph.add_node("input_validation_agent", InputValidationChain().create())
         graph.add_node("initial_analysis_agent", InitialAnalysisChain().create())
         graph.add_node("action_expansion_agent", ActionsExpansionChain().create())
+        graph.add_node("states_enumeration_agent", StatesEnumerationChain().create())
         graph.add_node("context_discretizer_agent", ContextDiscretizerChain().create())
-        #graph.add_node("contexts_completion_agent", ContextsCompletionChain().create())
+        graph.add_node("contexts_completion_agent", ContextsCompletionChain().create())
 
         graph.add_conditional_edges("input_validation_agent", self._validation_routing)
-        graph.add_conditional_edges("initial_analysis_agent", self._context_enhancement_routing)
-        graph.add_edge("initial_analysis_agent", "action_expansion_agent")
+        graph.add_edge("initial_analysis_agent", ["action_expansion_agent", "states_enumeration_agent"])
+        graph.add_conditional_edges("states_enumeration_agent", self._context_enhancement_routing)
         graph.add_edge("action_expansion_agent", "context_discretizer_agent")
-        graph.add_edge("context_discretizer_agent", END)
-        #graph.add_edge("contexts_completion_agent", END)
+        graph.add_edge("context_discretizer_agent", "contexts_completion_agent")
+        graph.add_edge("contexts_completion_agent", END)
 
 
         graph.set_entry_point("input_validation_agent")

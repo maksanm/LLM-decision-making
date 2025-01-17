@@ -15,7 +15,7 @@ class PerplexityRetriever:
     def invoke(self, search_query):
         perplexity_prompt = search_query
         if self.domains:
-            perplexity_prompt += f"\nFocus on these sources: '{"', '".join(self.domains)}'."
+            perplexity_prompt += f". Focus on these sources: '{"', '".join(self.domains)}'."
         return self._retrieve_from_perplexity(perplexity_prompt)
 
     def _retrieve_from_perplexity(self, perplexity_prompt):
