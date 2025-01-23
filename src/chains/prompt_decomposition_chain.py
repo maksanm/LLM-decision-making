@@ -34,7 +34,6 @@ User request:
 Response:
 """
 
-
     def create(self):
         self.llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.0)
         return (

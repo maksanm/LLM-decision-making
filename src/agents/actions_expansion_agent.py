@@ -1,14 +1,14 @@
 from chains.can_expand_actions_chain import CanExpandActionsChain
 from chains.actions_expansion_chain import ActionsExpansionChain
-from chains.web_search_chain import WebSearchChain
+from retrievers.web_retriever import WebRetriever
 
 
 class ActionsExpansionAgent:
 
     def __init__(self):
-        self.web_search_chain = WebSearchChain().create()
         self.can_expand_actions_chain = CanExpandActionsChain().create()
         self.actions_expansion_chain = ActionsExpansionChain().create()
+        self.web_retriever = WebRetriever().create()
 
 
     def invoke(self, state):
@@ -19,15 +19,15 @@ class ActionsExpansionAgent:
         if not can_expand:
             return {}
 
-        search_query = f"User request was \"{state["user_request"]}\", so initially proposed actions are {state["initial_actions"]}. Please suggest proposed actions alternetives."
-        state = state | {"search_query": search_query}
-        state = state | {"retrieved_data": self.web_search_chain.invoke(state)}
+        web_search_query = f"User request was \"{state["user_request"]}\", so initially proposed actions are {state["initial_actions"]}. Please suggest proposed actions alternetives."
+        state = state | {"retrieved_data": self.web_retriever.invoke({"input": web_search_query})}
+        #print(state["retrieved_data"])
 
         try:
-            response = self.actions_expansion_chain.invoke(state)
+            expansion_result = self.actions_expansion_chain.invoke(state)
             return {
-                "action_space": response["new_actions"],
-                "expanded_actions": response["new_actions"]
+                "action_space": expansion_result["new_actions"],
+                "expanded_actions": expansion_result["new_actions"]
             }
         except Exception as e:
             print(f"Error parsing the expanded actions: {e}")

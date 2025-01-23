@@ -14,8 +14,8 @@ class PerplexityRetriever:
         self.domains = domains
 
 
-    def invoke(self, search_query):
-        perplexity_prompt = search_query
+    def invoke(self, input):
+        perplexity_prompt = input
         if self.domains:
             perplexity_prompt += f". Focus on these sources: '{"', '".join(self.domains)}'."
         return self._retrieve_from_perplexity(perplexity_prompt)
@@ -23,7 +23,7 @@ class PerplexityRetriever:
 
     def _retrieve_from_perplexity(self, perplexity_prompt):
         # Configure Selenium WebDriver using Chrome in GUI mode with Undetected ChromeDriver enabled
-        perplexity_driver = Driver(uc=True, headless=False)
+        perplexity_driver = Driver(uc=True, headless=False, multi_proxy=True)
         # Open URL using UC mode with 3 second reconnect time to bypass initial detection
         perplexity_driver.uc_open_with_reconnect(os.getenv("PERPLEXITY_URL"), reconnect_time=3)
         soup = BeautifulSoup(perplexity_driver.page_source, 'html.parser')

@@ -1,5 +1,5 @@
 from chains.context_completion_chain import ContextCompletionChain
-from chains.context_discretizer_chain import ContextDiscretizerChain
+from chains.context_discretization_chain import ContextDiscretizerChain
 
 
 class ContextEnhancementAgent:

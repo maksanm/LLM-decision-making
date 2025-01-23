@@ -7,7 +7,7 @@ from retrievers.tavily_retriever import TavilyRetriever
 from langchain_core.runnables import RunnablePassthrough
 
 
-class WebSearchChain:
+class WebRetriever:
     AGGREGATION_PROMPT_TEMPLATE = """Using the following data:
 
 <PERPLEXITY-RESPONSE>
@@ -19,7 +19,7 @@ class WebSearchChain:
 </TAVILY-RESPONSE>
 
 Please provide a summary that integrates information from both sources to respond the below query:
-{search_query}
+{input}
 """
 
     def __init__(self, domains=None):
@@ -31,8 +31,8 @@ Please provide a summary that integrates information from both sources to respon
     def create(self):
         return (
             RunnablePassthrough.assign(
-                perplexity_response=lambda state: self.perplexity_retriever.invoke(state["search_query"]),
-                tavily_response=lambda state: self.tavily_retriever.invoke(state["search_query"])
+                perplexity_response=lambda state: self.perplexity_retriever.invoke(state["input"]),
+                tavily_response=lambda state: self.tavily_retriever.invoke(state["input"])
             )
             | PromptTemplate.from_template(self.AGGREGATION_PROMPT_TEMPLATE)
             | self.llm

@@ -22,17 +22,6 @@ app.add_middleware(
 
 graph = DecisionGraph().create()
 
-from langchain_core.runnables.graph import CurveStyle, MermaidDrawMethod, NodeStyles
-image_data = graph.get_graph().draw_mermaid_png(draw_method=MermaidDrawMethod.API)
-
-# Define the file path where you want to save the image
-file_path = "graph.png"
-
-# Write the image data to the file
-with open(file_path, "wb") as file:
-    file.write(image_data)
-
-
 
 @app.get("/")
 async def redirect_root_to_docs():
@@ -47,10 +36,20 @@ async def debug(user_request: str):
         "initial_context": "",
         "action_space": [],
         "is_valid": False,
-        "expanded_actions": ""
+        "expanded_actions": "",
+        "state_space": {}
     }
     return graph.invoke(initial_state)
 
 
 if __name__ == "__main__":
     uvicorn.run(app)
+
+
+'''
+from langchain_core.runnables.graph import MermaidDrawMethod
+image_data = graph.get_graph().draw_mermaid_png(draw_method=MermaidDrawMethod.API)
+file_path = "graph.png"
+with open(file_path, "wb") as file:
+    file.write(image_data)
+'''

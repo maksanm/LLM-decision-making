@@ -16,6 +16,7 @@ class DecisionState(TypedDict):
     action_space: Annotated[List[str], add]
     is_valid: bool
     expanded_actions: str
+    state_space: dict
 
 
 class DecisionGraph:

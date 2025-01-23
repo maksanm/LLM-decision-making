@@ -12,8 +12,8 @@ class TavilyRetriever:
         )
 
 
-    def invoke(self, search_query):
-        return (self.retriever | self._format_tavily_response).invoke(search_query)
+    def invoke(self, input):
+        return (self.retriever | self._format_tavily_response).invoke(input)
 
 
     def _format_tavily_response(self, retrieved_documents):
