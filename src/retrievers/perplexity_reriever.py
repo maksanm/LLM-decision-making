@@ -9,14 +9,17 @@ import os
 import time
 
 class PerplexityRetriever:
+
     def __init__(self, domains=None):
         self.domains = domains
+
 
     def invoke(self, search_query):
         perplexity_prompt = search_query
         if self.domains:
             perplexity_prompt += f". Focus on these sources: '{"', '".join(self.domains)}'."
         return self._retrieve_from_perplexity(perplexity_prompt)
+
 
     def _retrieve_from_perplexity(self, perplexity_prompt):
         # Configure Selenium WebDriver using Chrome in GUI mode with Undetected ChromeDriver enabled

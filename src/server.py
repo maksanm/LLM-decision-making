@@ -22,6 +22,17 @@ app.add_middleware(
 
 graph = DecisionGraph().create()
 
+from langchain_core.runnables.graph import CurveStyle, MermaidDrawMethod, NodeStyles
+image_data = graph.get_graph().draw_mermaid_png(draw_method=MermaidDrawMethod.API)
+
+# Define the file path where you want to save the image
+file_path = "graph.png"
+
+# Write the image data to the file
+with open(file_path, "wb") as file:
+    file.write(image_data)
+
+
 
 @app.get("/")
 async def redirect_root_to_docs():
@@ -35,7 +46,8 @@ async def debug(user_request: str):
         "goal_definition": "",
         "initial_context": "",
         "action_space": [],
-        "is_valid": False
+        "is_valid": False,
+        "expanded_actions": ""
     }
     return graph.invoke(initial_state)
 

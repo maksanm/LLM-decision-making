@@ -27,6 +27,7 @@ Please provide a summary that integrates information from both sources to respon
         self.perplexity_retriever = PerplexityRetriever(domains=domains)
         self.tavily_retriever = TavilyRetriever(domains=domains)
 
+
     def create(self):
         return (
             RunnablePassthrough.assign(

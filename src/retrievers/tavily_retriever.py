@@ -2,6 +2,7 @@ from langchain_community.retrievers import TavilySearchAPIRetriever
 
 
 class TavilyRetriever:
+
     def __init__(self, k=1, domains=None):
         self.retriever = TavilySearchAPIRetriever(
             k=k,
@@ -10,8 +11,10 @@ class TavilyRetriever:
             search_depth="advanced"
         )
 
+
     def invoke(self, search_query):
         return (self.retriever | self._format_tavily_response).invoke(search_query)
+
 
     def _format_tavily_response(self, retrieved_documents):
         formatted_response = []

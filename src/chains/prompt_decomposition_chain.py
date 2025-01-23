@@ -3,14 +3,11 @@ from langchain_core.output_parsers import JsonOutputParser
 from langchain_openai import ChatOpenAI
 
 
-class InitialAnalysisChain:
-    DECOMPOSITION_PROMPT_TEMPLATE = """User request:
-{user_request}
-
-Extract the following information from the above request:
+class PromptDecompositionChain:
+    DECOMPOSITION_PROMPT_TEMPLATE = """Extract the following information from the user request:
 1. Goal definition
 2. Initial context, independent of the goal definition, containing user-provided decision-supportive data; if none is provided, return an empty string
-3. Action space comprises concrete actions clearly articulated in the user request. Each action must be directly applicable and executable, leaving no room for vague or abstract considerations. Do not invent new actions. For example, if the user is considering using a car or bicycle, and other vehicles are also being considered, return only 'car' and 'bicycle' as options.
+3. Action space comprises concrete actions clearly articulated in the user request in the form of a subject and predicate. Each action must be directly applicable and executable, leaving no room for vague or abstract considerations. Do not invent new actions. For example, if the user is considering using a car or bicycle, and other vehicles are also being considered, return only 'Choose car' and 'Choose bicycle' as options.
 
 Respond in the following JSON format:
 {{
@@ -27,31 +24,21 @@ Response:
 {{
     "goal_definition": "Decide which crop to plant.",
     "initial_context": "The demand for avocados is expected to increase next year, while the demand for pears will remain constant.",
-    "action_space": ["Avocados", "Pears"]
+    "action_space": ["Plant avocados", "Plant pears"]
 }}
 </EXAMPLE>
+
+User request:
+{user_request}
 
 Response:
 """
 
+
     def create(self):
         self.llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.0)
-        return (self._decompose_user_prompt)
-
-    def _decompose_user_prompt(self, state):
-        decomposition_chain = (
+        return (
             PromptTemplate.from_template(self.DECOMPOSITION_PROMPT_TEMPLATE)
             | self.llm
             | JsonOutputParser()
         )
-        try:
-            decomposed_prompt = decomposition_chain.invoke(state)
-            return {
-                "goal_definition": decomposed_prompt["goal_definition"],
-                "initial_context": decomposed_prompt["initial_context"],
-                "action_space": decomposed_prompt["action_space"]
-            }
-        except Exception as e:
-            print(f"Error parsing the decomposed prompt: {e}")
-            raise e
-
