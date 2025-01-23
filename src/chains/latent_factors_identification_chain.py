@@ -17,14 +17,15 @@ Retrieved data:
 
 Based on the retrieved data, select a list of unknown latent factors and states of nature that can affect the decision process. The states of nature should describe specific events or circumstances that may happen and impact the decision-making process. Use clear and descriptive statements that reflect potential future scenarios. For example, states could include events like "The market demand will significantly increase" or "A new competitor enters the market".
 
-Select a maximum of """ + os.getenv("LATENT_FACTORS_MAX_LIMIT") + """ states. Be concise. Return in the below JSON format:
+Select a maximum of """ + os.getenv("LATENT_FACTORS_MAX_LIMIT") + """ states. Be concise in descriptions.
 
-<RESPONSE-FORMAT>
+Respond in the following JSON format:
+
+```json
 {{
     "latent_factors": ["State 1 description of a possible event", "State 2 description of another possible event", "..."]
 }}
-</RESPONSE-FORMAT>
-"""
+```"""
 
     def create(self):
         self.llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.0)

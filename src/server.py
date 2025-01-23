@@ -49,7 +49,7 @@ if __name__ == "__main__":
 '''
 from langchain_core.runnables.graph import MermaidDrawMethod
 image_data = graph.get_graph().draw_mermaid_png(draw_method=MermaidDrawMethod.API)
-file_path = "graph.png"
+file_path = "docs/graph.png"
 with open(file_path, "wb") as file:
     file.write(image_data)
 '''

@@ -1,0 +1,37 @@
+{
+    "user_request": "i have to choose the type of boots for a winter: sneakers, shoes or anything else. synoptics tell the winter gonna be warm",
+    "goal_definition": "Choose the type of boots for winter.",
+    "initial_context": "The winter is expected to be warm.",
+    "action_space": [
+      "Choose sneakers",
+      "Choose shoes",
+      "Choose Ankle Boots",
+      "Opt for Waterproof Shoes",
+      "Consider Slip-On Boots",
+      "Select Lightweight Hiking Boots"
+    ],
+    "is_valid": true,
+    "expanded_actions": [
+      "Choose Ankle Boots",
+      "Opt for Waterproof Shoes",
+      "Consider Slip-On Boots",
+      "Select Lightweight Hiking Boots"
+    ],
+    "state_space": {
+      "Unexpected cold snap occurs, leading to a need for more insulated boots than initially planned.": [
+        "The unexpected cold snap occurs, increasing demand for insulated boots.",
+        "The unexpected cold snap does not occur, maintaining current boot plans.",
+        "The unexpected cold snap occurs partially, leading to a moderate increase in demand for insulated boots."
+      ],
+      "Increased snowfall results in higher demand for boots with superior traction and waterproofing features.": [
+        "Increased snowfall leads to a significant rise in demand for boots with superior traction and waterproofing features.",
+        "Snowfall levels remain unchanged, resulting in stable demand for all types of boots.",
+        "Moderate snowfall occurs, causing a slight increase in demand for boots with enhanced features."
+      ],
+      "Personal health issues arise, necessitating a focus on comfort and support in boot selection to prevent foot problems.": [
+        "Personal health issues significantly impact boot selection.",
+        "Personal health issues have no effect on boot selection.",
+        "Personal health issues influence boot selection to a moderate extent."
+      ]
+    }
+  }

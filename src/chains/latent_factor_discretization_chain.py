@@ -8,16 +8,18 @@ class LatentFactorDiscretizationChain:
     STATES_DISCRETIZATION_PROMPT_TEMPLATE = """Considering the following latent factor:
 {latent_factor}
 
-In the context of the decision with goal defined below:
+In the context of the decision with the goal defined below:
 {goal_definition}
 
-Propose up to """ + os.getenv("LATENT_FACTOR_VALUES_MAX_LIMIT") + """ possible future outcomes that this latent factor can take. These values should represent different plausible scenarios such as "the event will happen", "the event will not happen", "the event will happen partially", etc. Be concise.
+Propose up to """ + os.getenv("LATENT_FACTOR_VALUES_MAX_LIMIT") + """ possible future outcomes that this latent factor can take. These values should represent different plausible scenarios, such as "the event will happen," "the event will not happen," "the event will happen partially," etc. Ensure that each outcome is concise and limited to a brief statement, avoiding any descriptions of what the outcome results in or how it influences the decision.
 
 Respond in the following JSON format:
+
+```json
 {{
-    "latent_factor_values": ["Possible Outcome 1", "Possible Outcome 2", "..."]
+    "latent_factor_values": ["Concise Outcome 1", "Concise Outcome 2", "..."]
 }}
-"""
+```"""
 
     def create(self):
         self.llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.0)

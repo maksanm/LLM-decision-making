@@ -10,22 +10,27 @@ class PromptDecompositionChain:
 3. Action space comprises concrete actions clearly articulated in the user request in the form of a subject and predicate. Each action must be directly applicable and executable, leaving no room for vague or abstract considerations. Do not invent new actions. For example, if the user is considering using a car or bicycle, and other vehicles are also being considered, return only 'Choose car' and 'Choose bicycle' as options.
 
 Respond in the following JSON format:
+
+```json
 {{
     "goal_definition": "Goal definition X",
     "initial_context": "Initial context X",
     "action_space": [["Action a", "Action b", ...]
 }}
+```
 
 <EXAMPLE>
 User request:
 I'm a farmer and deciding what culture to plant. I can plant pears or avocados. Maybe I should consider another crop? The next year the demand for avocados is going to increase, the demand for pears would stay the same.
 
 Response:
+```json
 {{
     "goal_definition": "Decide which crop to plant.",
     "initial_context": "The demand for avocados is expected to increase next year, while the demand for pears will remain constant.",
     "action_space": ["Plant avocados", "Plant pears"]
 }}
+```
 </EXAMPLE>
 
 User request:
