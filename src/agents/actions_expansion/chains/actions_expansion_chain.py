@@ -25,7 +25,7 @@ Analyze the retrieved data to identify up to """+ os.getenv("EXPANDED_ACTIONS_MA
 ```"""
 
     def create(self):
-        llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.0)
+        llm = ChatOpenAI(model_name="gpt-4.1-mini", temperature=0.0)
         return (
             PromptTemplate.from_template(self.ACTION_EXPANSION_PROMPT_TEMPLATE)
             | llm

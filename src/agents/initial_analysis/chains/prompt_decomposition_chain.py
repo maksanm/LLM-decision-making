@@ -40,7 +40,7 @@ Response:
 """
 
     def create(self):
-        self.llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.0)
+        self.llm = ChatOpenAI(model_name="gpt-4.1-nano", temperature=0.0)
         return (
             PromptTemplate.from_template(self.DECOMPOSITION_PROMPT_TEMPLATE)
             | self.llm

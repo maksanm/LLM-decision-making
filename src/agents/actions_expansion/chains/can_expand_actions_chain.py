@@ -16,7 +16,7 @@ Response:
 """
 
     def create(self):
-        llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.0)
+        llm = ChatOpenAI(model_name="gpt-4.1-nano", temperature=0.0)
         return (
             PromptTemplate.from_template(self.CAN_EXPAND_PROMPT_TEMPLATE)
             | llm

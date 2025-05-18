@@ -1,6 +1,6 @@
-from chains.can_expand_actions_chain import CanExpandActionsChain
-from chains.actions_expansion_chain import ActionsExpansionChain
-from retrievers.web_retriever import WebRetriever
+from .chains.can_expand_actions_chain import CanExpandActionsChain
+from .chains.actions_expansion_chain import ActionsExpansionChain
+from retrievers.web_retriever.retriever import WebRetriever
 
 
 class ActionsExpansionAgent:

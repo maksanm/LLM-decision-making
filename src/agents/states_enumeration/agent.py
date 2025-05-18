@@ -1,6 +1,6 @@
-from chains.latent_factors_identification_chain import LatentFactorsIdentificationChain
-from chains.latent_factor_discretization_chain import LatentFactorDiscretizationChain
-from retrievers.web_retriever import WebRetriever
+from .chains.latent_factors_identification_chain import LatentFactorsIdentificationChain
+from .chains.latent_factor_discretization_chain import LatentFactorDiscretizationChain
+from retrievers.web_retriever.retriever import WebRetriever
 
 
 
@@ -13,8 +13,8 @@ class StatesEnumerationAgent:
 
 
     def invoke(self, state):
-        web_search_query = f"The user is making a decision with the following goal: {state['goal_definition']}. Please explore relevant current online data, focusing on information pertinent to any potential latent risk factors that can affect the decision-making process and goal achievement."
-        state = state | {"input": web_search_query}
+        web_search_query = f"The user request is:\n`{state["user_request"]}`\nAnalyze current online data for risks (e.g., weather, logistics, safety etc.) that could impact the user's goal: '{state['goal_definition']}', and highlight key threats."
+        x =  self.web_retriever.invoke({"input": web_search_query})
         state = state | {"retrieved_data": self.web_retriever.invoke({"input": web_search_query})}
         #print(state["retrieved_data"])
 

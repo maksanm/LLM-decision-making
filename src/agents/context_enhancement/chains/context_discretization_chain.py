@@ -3,7 +3,7 @@ from langchain_core.output_parsers import JsonOutputParser
 from langchain_openai import ChatOpenAI
 
 
-class ContextDiscretizerChain:
+class ContextDiscretizationChain:
     CONTEXT_DISCRETIZATION_PROMPT_TEMPLATE = """
 TODO: write prompt after StatesEnumerationAgent implementation
 {states_space}
@@ -12,7 +12,7 @@ Return JSON {{"contexts": []}}
 """
 
     def __init__(self):
-        self.llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.0)
+        self.llm = ChatOpenAI(model_name="gpt-4.1-nano", temperature=0.0)
 
 
     def create(self):

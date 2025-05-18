@@ -30,16 +30,7 @@ async def redirect_root_to_docs():
 
 @app.post("/debug")
 async def debug(user_request: str):
-    initial_state = {
-        "user_request": user_request,
-        "goal_definition": "",
-        "initial_context": "",
-        "action_space": [],
-        "is_valid": False,
-        "expanded_actions": "",
-        "state_space": {}
-    }
-    return graph.invoke(initial_state)
+    return graph.invoke({"user_request": user_request})
 
 
 if __name__ == "__main__":

@@ -3,10 +3,10 @@ from langgraph.graph import END, StateGraph
 from typing import Annotated, TypedDict, List
 from operator import add
 
-from agents.initial_analysis_agent import InitialAnalysisAgent
-from agents.actions_expansion_agent import ActionsExpansionAgent
-from agents.states_enumeration_agent import StatesEnumerationAgent
-from agents.context_enhancement_agent import ContextEnhancementAgent
+from agents.initial_analysis.agent import InitialAnalysisAgent
+from agents.actions_expansion.agent import ActionsExpansionAgent
+from agents.states_enumeration.agent import StatesEnumerationAgent
+from agents.context_enhancement.agent import ContextEnhancementAgent
 
 
 class DecisionState(TypedDict):

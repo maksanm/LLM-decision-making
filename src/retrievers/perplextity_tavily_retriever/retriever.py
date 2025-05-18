@@ -2,8 +2,8 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import ChatOpenAI
 
-from retrievers.perplexity_reriever import PerplexityRetriever
-from retrievers.tavily_retriever import TavilyRetriever
+from perplexity_reriever import PerplexityRetriever
+from tavily_retriever import TavilyRetriever
 from langchain_core.runnables import RunnablePassthrough
 
 

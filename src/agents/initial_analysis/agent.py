@@ -1,5 +1,5 @@
-from chains.input_validation_chain import InputValidationChain
-from chains.prompt_decomposition_chain import PromptDecompositionChain
+from .chains.input_validation_chain import InputValidationChain
+from .chains.prompt_decomposition_chain import PromptDecompositionChain
 
 
 class InitialAnalysisAgent:
