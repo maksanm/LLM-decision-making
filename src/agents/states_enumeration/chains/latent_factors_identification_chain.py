@@ -1,7 +1,10 @@
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.runnables import RunnablePassthrough
 from langchain_openai import ChatOpenAI
 import os
+
+from retrievers.web_retriever.retriever import WebRetriever
 
 class LatentFactorsIdentificationChain:
     LATENT_FACTORS_IDENTIFICATION_PROMPT_TEMPLATE = """User request:
@@ -27,10 +30,20 @@ Respond in the following JSON format:
 }}
 ```"""
 
+    def __init__(self):
+        self.web_retriever = WebRetriever().create()
+
     def create(self):
         self.llm = ChatOpenAI(model_name="gpt-4.1-nano", temperature=0.0)
         return (
-            PromptTemplate.from_template(self.LATENT_FACTORS_IDENTIFICATION_PROMPT_TEMPLATE)
+            RunnablePassthrough.assign(
+                retrieved_data=lambda state: self._retrieve_data(state)
+            )
+            | PromptTemplate.from_template(self.LATENT_FACTORS_IDENTIFICATION_PROMPT_TEMPLATE)
             | self.llm
             | JsonOutputParser()
         )
+
+    def _retrieve_data(self, state):
+        web_search_query = f"The user request is:\n`{state["user_request"]}`\nAnalyze current online data for risks (e.g., weather, logistics, safety etc.) that could impact the user's goal: '{state['goal_definition']}', and highlight key threats."
+        return self.web_retriever.invoke({"input": web_search_query})

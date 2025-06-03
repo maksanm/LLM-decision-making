@@ -1,6 +1,5 @@
 from .chains.can_expand_actions_chain import CanExpandActionsChain
 from .chains.actions_expansion_chain import ActionsExpansionChain
-from retrievers.web_retriever.retriever import WebRetriever
 
 
 class ActionsExpansionAgent:
@@ -8,7 +7,6 @@ class ActionsExpansionAgent:
     def __init__(self):
         self.can_expand_actions_chain = CanExpandActionsChain().create()
         self.actions_expansion_chain = ActionsExpansionChain().create()
-        self.web_retriever = WebRetriever().create()
 
 
     def invoke(self, state):
@@ -18,10 +16,6 @@ class ActionsExpansionAgent:
         can_expand = self._parse_bool(can_expand_str)
         if not can_expand:
             return {}
-
-        web_search_query = f"User request was \"{state["user_request"]}\", so initially proposed actions are {state["initial_actions"]}. Please suggest proposed actions alternetives."
-        state = state | {"retrieved_data": self.web_retriever.invoke({"input": web_search_query})}
-        #print(state["retrieved_data"])
 
         try:
             expansion_result = self.actions_expansion_chain.invoke(state)

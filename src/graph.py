@@ -11,10 +11,11 @@ from agents.context_enhancement.agent import ContextEnhancementAgent
 
 class DecisionState(TypedDict):
     user_request: str
+    is_valid: bool
     goal_definition: str
     initial_context: str
+    contexts: List[str]
     action_space: Annotated[List[str], add]
-    is_valid: bool
     expanded_actions: str
     state_space: dict
 
@@ -22,7 +23,7 @@ class DecisionState(TypedDict):
 class DecisionGraph:
 
     def _validation_routing(self, state):
-        if state["is_valid"] == True:
+        if state["is_valid"]:
             return ["action_expansion_agent", "states_enumeration_agent"]
         else:
             return END

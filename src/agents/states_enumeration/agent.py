@@ -1,7 +1,5 @@
 from .chains.latent_factors_identification_chain import LatentFactorsIdentificationChain
 from .chains.latent_factor_discretization_chain import LatentFactorDiscretizationChain
-from retrievers.web_retriever.retriever import WebRetriever
-
 
 
 class StatesEnumerationAgent:
@@ -9,15 +7,8 @@ class StatesEnumerationAgent:
     def __init__(self):
         self.latent_factors_identification_chain = LatentFactorsIdentificationChain().create()
         self.latent_factor_discretization_chain = LatentFactorDiscretizationChain().create()
-        self.web_retriever = WebRetriever().create()
-
 
     def invoke(self, state):
-        web_search_query = f"The user request is:\n`{state["user_request"]}`\nAnalyze current online data for risks (e.g., weather, logistics, safety etc.) that could impact the user's goal: '{state['goal_definition']}', and highlight key threats."
-        x =  self.web_retriever.invoke({"input": web_search_query})
-        state = state | {"retrieved_data": self.web_retriever.invoke({"input": web_search_query})}
-        #print(state["retrieved_data"])
-
         try:
             identification_result = self.latent_factors_identification_chain.invoke(state)
 

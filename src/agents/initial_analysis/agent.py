@@ -32,6 +32,6 @@ class InitialAnalysisAgent:
 
     def _parse_bool(self, str):
         if str == "True": return True
-        elif str == "False": return True
+        elif str == "False": return False
         raise Exception("Unable to parse the LLM output")
 
